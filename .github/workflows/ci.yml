@@ -51,7 +51,7 @@ jobs:
       id: tree
       run: |
         # Генерируем дерево. Исключения упорядочены:
-        tree -I '.git|.github|.venv|__pycache__|*.egg-info|*.pyc' -a -C --noreport . > tree_output.txt
+        tree -I '.git|.github|.venv|__pycache__|*.egg-info|*.pyc|tree_output.txt' -a -C --noreport . > tree_output.txt
 
         # Сохраняем результат для следующего шага.
         echo 'TREE_CONTENT<<EOF' >> $GITHUB_ENV
