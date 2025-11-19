@@ -22,8 +22,7 @@
 ├── .gitignore
 ├── LICENSE
 ├── README.md
-├── requirements.txt
-└── tree_output.txt
+└── requirements.txt
 ```
 <!-- STRUCTURE_END -->
 
