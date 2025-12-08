@@ -1,6 +1,4 @@
-<p align="right">
-  <a href="README.ru.md">🇷🇺 Русская версия</a>
-</p>
+> **🌐 Choose language:** [English](README.md) | [Русский](README.ru.md)
 
 # 🔎📄 Plagiarism Detector
 **Plagiarism Detector** - a tool for detecting 🤥plagiarism in student 📄papers using text analysis methods and 🤖artificial intelligence technology.
