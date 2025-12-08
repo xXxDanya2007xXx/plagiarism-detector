@@ -1,23 +1,27 @@
-# 🔎📄 Plagiarism Detector
-**Plagiarism Detector** - инструмент для выявления 🤥плагиата в студенческих 📄работах с использованием методов анализа текста и технологии 🤖искусственного интеллекта.  
-✨ *Помогает преподавателям быстро анализировать оригинальность работ, выявлять недобросовестных студентов и поддерживать академическую честность.*
+<p align="right">
+  <a href="README.ru.md">🇷🇺 Русская версия</a>
+</p>
 
-## 🌈 Функционал
-- 📄 **Мультиформатная поддержка**: Работа с текстовыми файлами, DOCX и PDF
-- 🤓 **Умное сравнение**: Несколько методов анализа сходства (...) <!-- TODO: добавить описание -->
-- 📊 **Визуализация результатов**: Матрицы схожести и детальные отчеты
-- 🤖 **Автоматизация**: Скрипт запускается автоматически через [GitHub Actions](https://github.com/features/actions) по расписанию 
-- 📝 **Генерация отчетов**: Создание подробных отчетов в формате `Markdown` и `JSON`
+# 🔎📄 Plagiarism Detector
+**Plagiarism Detector** - a tool for detecting 🤥plagiarism in student 📄papers using text analysis methods and 🤖artificial intelligence technology.
+✨ *Helps teachers quickly analyze the originality of papers, identify dishonest students, and maintain academic integrity.*
+
+## 🌈 Features
+- 📄 **Multi-format support**: Supports text files, DOCX, and PDF formats
+- 🤓 **Smart comparison**: Multiple similarity analysis methods (...) <!-- TODO: add description -->
+- 📊 **Results visualization**: Similarity matrices and detailed reports
+- 🤖 **Automation**: Script runs automatically via [GitHub Actions](https://github.com/features/actions) on a schedule
+- 📝 **Report generation**: Generation of detailed reports in `Markdown` and `JSON` formats
 
 ## 🎯 TODO
-- [ ] Реализовать базовый парсинг текстовых файлов
-- [ ] Добавить поддержку PDF и DOCX форматов
-- [ ] Реализовать алгоритмы сравнения текстов
-- [ ] Создать систему визуализации результатов
-- [ ] Настроить автоматизированное тестирование
-- [ ] Завершить проект
+- [ ] Implement basic text file parsing
+- [ ] Add PDF and DOCX format support
+- [ ] Implement text comparison algorithms
+- [ ] Create a results visualization system
+- [ ] Set up automated testing
+- [ ] Complete the project
 
-## 🗃️ Структура проекта
+## 🗃️ Project Structure
 <!-- STRUCTURE_START -->
 ```text
 .
@@ -28,51 +32,50 @@
 ```
 <!-- STRUCTURE_END -->
 
-## ⚙️🛠️ Технологии
-- [**<img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" width="18"/> Python 3.10+**](https://www.python.org/): Основной язык разработки
-- [**<img src="https://upload.wikimedia.org/wikipedia/commons/c/c2/GitHub_Invertocat_Logo.svg" width="18"/> GitHub Actions**](https://github.com/features/actions): CI/CD автоматизация
+## ⚙️🛠️ Technologies
+- [**<img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" width="18"/> Python 3.10+**](https://www.python.org/): Main development language
+- [**<img src="https://upload.wikimedia.org/wikipedia/commons/c/c2/GitHub_Invertocat_Logo.svg" width="18"/> GitHub Actions**](https://github.com/features/actions): CI/CD automation
 
-## 🚀 Установка и запуск
+## 🚀 Installation and Running
 ### <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" width="24"/> Linux/ <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" width="24"/> macOS
-```sh
-# Клонируем репозиторий
+```
+# Clone the repository
 git clone https://github.com/xXxDanya2007xXx/plagiarism-detector.git
 cd plagiarism-detector
 
-# Устанавливаем и активируем виртуальное окружение
+# Install and activate virtual environment
 python3 -m venv .venv
 . .venv/bin/activate
 
-# Устанавливаем зависимости
+# Install dependencies
 pip3 install -r requirements.txt
 
-# Запускаем
+# Run
 ...
 ```
 
 ### <img src="https://upload.wikimedia.org/wikipedia/commons/8/87/Windows_logo_-_2021.svg" width="24"/> Windows
-```cmd
-:: Клонируем репозиторий
+```
+:: Clone the repository
 git clone https://github.com/xXxDanya2007xXx/plagiarism-detector.git
 cd plagiarism-detector
 
-:: Устанавливаем и активируем виртуальное окружение
+:: Install and activate virtual environment
 python -m venv .venv
 .venv\Scripts\activate
 
-:: Устанавливаем зависимости
+:: Install dependencies
 pip install -r requirements.txt
 
-:: Запускаем
+:: Run
 ...
 ```
 
 > [!TIP]
-> Для выхода из виртуального окружения используйте команду `deactivate`
+> Use the `deactivate` command to exit the virtual environment
 
 ---
 
-<p align="center">
-    <sub>* Проект выполнен в рамках курса «Информационные Технологии и Cервисы»<br></sub>
+<p align="center"> 
+    <sub>* Project completed as part of the «Information Technologies and Services» course<br></sub> 
 </p>
-
