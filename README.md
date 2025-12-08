@@ -28,6 +28,7 @@
 ├── .gitignore
 ├── LICENSE
 ├── README.md
+├── README.ru.md
 └── requirements.txt
 ```
 <!-- STRUCTURE_END -->
