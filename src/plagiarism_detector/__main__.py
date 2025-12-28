@@ -5,7 +5,13 @@ from pathlib import Path
 from typing import List, Optional
 
 from .analyzer import analyze_folder
-from .reporting import save_heatmap_png, save_json, save_markdown
+from .reporting import (
+    save_heatmap_png,
+    save_json,
+    save_markdown,
+    save_similarity_histogram_png,
+    save_top_pairs_bar_png,
+)
 
 
 def parse_exts(value: Optional[str]) -> Optional[List[str]]:
@@ -47,6 +53,8 @@ def main() -> int:
     save_markdown(result, out_dir / "report.md")
     if not args.no_plot:
         save_heatmap_png(result, out_dir / "heatmap.png")
+        save_similarity_histogram_png(result, out_dir / "similarity_hist.png")
+        save_top_pairs_bar_png(result, out_dir / "top_pairs.png")
 
     print(f"Files: {len(result.files)}")
     print(f"Saved: {out_dir / 'report.json'}")

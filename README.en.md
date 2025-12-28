@@ -102,6 +102,18 @@ python -m plagiarism_detector --input data/sample --out reports --threshold 0.75
 python scripts/generate_site.py --input data/sample --out reports --site site --threshold 0.75
 ```
 
+## Example of result
+
+Heatmap:
+![Heatmap](docs/assets/example_heatmap.png)
+
+Similarity histogram:
+![Similarity histogram](docs/assets/example_similarity_hist.png)
+
+Top pairs:
+![Top pairs](docs/assets/example_top_pairs.png)
+
+
 ---
 
 ## Why both `reports/` and `site/` exist

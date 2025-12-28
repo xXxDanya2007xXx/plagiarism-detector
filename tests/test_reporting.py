@@ -4,7 +4,13 @@ import json
 from pathlib import Path
 
 from plagiarism_detector.analyzer import analyze_folder
-from plagiarism_detector.reporting import save_heatmap_png, save_json, save_markdown
+from plagiarism_detector.reporting import (
+    save_heatmap_png,
+    save_json,
+    save_markdown,
+    save_similarity_histogram_png,
+    save_top_pairs_bar_png,
+)
 
 
 def test_reporting_creates_files(tmp_path: Path):
@@ -20,10 +26,14 @@ def test_reporting_creates_files(tmp_path: Path):
     save_json(result, out / "report.json")
     save_markdown(result, out / "report.md")
     save_heatmap_png(result, out / "heatmap.png")
+    save_similarity_histogram_png(result, out / "similarity_hist.png")
+    save_top_pairs_bar_png(result, out / "top_pairs.png")
 
     assert (out / "report.json").exists()
     assert (out / "report.md").exists()
     assert (out / "heatmap.png").exists()
+    assert (out / "similarity_hist.png").exists()
+    assert (out / "top_pairs.png").exists()
 
     payload = json.loads((out / "report.json").read_text(encoding="utf-8"))
     for key in [

@@ -103,6 +103,17 @@ python -m plagiarism_detector --input data/sample --out reports --threshold 0.75
 python scripts/generate_site.py --input data/sample --out reports --site site --threshold 0.75
 ```
 
+## Пример результата
+
+Heatmap:
+![Heatmap](docs/assets/example_heatmap.png)
+
+Распределение схожестей:
+![Similarity histogram](docs/assets/example_similarity_hist.png)
+
+Топ самых похожих пар:
+![Top pairs](docs/assets/example_top_pairs.png)
+
 ---
 
 ## Папки `reports/` и `site/` — почему обе нужны

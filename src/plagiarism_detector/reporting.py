@@ -186,3 +186,61 @@ def save_heatmap_png(result: AnalysisResult, path: Path, *, title: str = "Simila
     plt.tight_layout()
     plt.savefig(path, dpi=160)
     plt.close()
+
+
+def save_similarity_histogram_png(
+    result: AnalysisResult,
+    path: Path,
+    *,
+    bins: int = 20,
+    title: str = "Similarity distribution (off-diagonal)",
+) -> None:
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+
+    vals = _off_diagonal_values(result.similarity_matrix)
+    plt.figure(figsize=(8, 4.5))
+
+    if not vals:
+        plt.text(0.5, 0.5, "Not enough data", ha="center", va="center")
+        plt.axis("off")
+    else:
+        plt.hist(vals, bins=bins, range=(0.0, 1.0), color="#2c7fb8", edgecolor="white")
+        plt.axvline(result.threshold, color="#d95f0e", linestyle="--", linewidth=2)
+        plt.xlabel("Similarity score")
+        plt.ylabel("Count")
+        plt.title(title)
+
+    plt.tight_layout()
+    plt.savefig(path, dpi=160)
+    plt.close()
+
+
+def save_top_pairs_bar_png(
+    result: AnalysisResult,
+    path: Path,
+    *,
+    k: int = 10,
+    title: str = "Top pairs (overall)",
+) -> None:
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+
+    pairs = top_pairs_overall(result.files, result.similarity_matrix, k=k)
+
+    plt.figure(figsize=(10, 0.6 * max(1, len(pairs)) + 2.5))
+
+    if not pairs:
+        plt.text(0.5, 0.5, "No pairs", ha="center", va="center")
+        plt.axis("off")
+    else:
+        labels = [f"{p['a']} ↔ {p['b']}" for p in reversed(pairs)]
+        scores = [float(p["score"]) for p in reversed(pairs)]
+        plt.barh(labels, scores, color="#41ab5d")
+        plt.xlim(0.0, 1.0)
+        plt.xlabel("Similarity score")
+        plt.title(title)
+
+    plt.tight_layout()
+    plt.savefig(path, dpi=160)
+    plt.close()
