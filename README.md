@@ -48,11 +48,14 @@
 │       ├── analyzer.py
 │       ├── preprocess.py
 │       ├── readers.py
+│       ├── reporting.py
 │       └── similarity.py
 ├── tests
 │   ├── test_analyzer.py
 │   ├── test_preprocess.py
+│   ├── test_reporting.py
 │   ├── test_similarity.py
+│   ├── test_similarity_tfidf.py
 │   └── test_smoke.py
 └── uploads
     └── .gitkeep
