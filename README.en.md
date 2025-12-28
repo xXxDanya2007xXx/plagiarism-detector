@@ -23,11 +23,32 @@
 <!-- STRUCTURE_START -->
 ```text
 .
+├── .flake8
+├── .github
+│   └── workflows
+│       ├── ci.yml
+│       └── readme-tree.yml
 ├── .gitignore
 ├── LICENSE
+├── README.en.md
 ├── README.md
-├── README.ru.md
-└── requirements.txt
+├── data
+│   └── sample
+│       └── .gitkeep
+├── docs
+│   └── methods.md
+├── pyproject.toml
+├── requirements.txt
+├── scripts
+│   └── .gitkeep
+├── src
+│   └── plagiarism_detector
+│       ├── __init__.py
+│       └── __main__.py
+├── tests
+│   └── test_smoke.py
+└── uploads
+    └── .gitkeep
 ```
 <!-- STRUCTURE_END -->
 
