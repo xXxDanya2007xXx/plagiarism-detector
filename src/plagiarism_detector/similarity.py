@@ -4,11 +4,15 @@ from dataclasses import dataclass
 from difflib import SequenceMatcher
 from typing import List, Sequence, Tuple
 
+import numpy as np
+from sklearn.feature_extraction.text import TfidfVectorizer
+
 
 @dataclass(frozen=True)
 class SimilarityConfig:
     ngram_n: int = 3
-    weights: Tuple[float, float] = (0.6, 0.4)  # (sequence, ngram_jaccard)
+    tfidf_ngram_range: Tuple[int, int] = (1, 2)
+    weights: Tuple[float, float, float] = (0.55, 0.25, 0.20)  # (tfidf, sequence, ngram)
 
 
 def sequence_ratio(a: str, b: str) -> float:
@@ -33,15 +37,22 @@ def ngram_jaccard(tokens_a: Sequence[str], tokens_b: Sequence[str], n: int = 3) 
     return float(len(A & B) / len(A | B))
 
 
-def combined_similarity(
-    text_a: str,
-    text_b: str,
-    tokens_a: Sequence[str],
-    tokens_b: Sequence[str],
-    cfg: SimilarityConfig = SimilarityConfig(),
-) -> float:
-    w_seq, w_ng = cfg.weights
-    s = w_seq * sequence_ratio(text_a, text_b) + w_ng * ngram_jaccard(
-        tokens_a, tokens_b, n=cfg.ngram_n
-    )
-    return float(min(1.0, max(0.0, s)))
+def cosine_tfidf_matrix(texts: List[str], ngram_range: Tuple[int, int] = (1, 2)) -> np.ndarray:
+    if not texts:
+        return np.zeros((0, 0), dtype=float)
+
+    vec = TfidfVectorizer(ngram_range=ngram_range, min_df=1)
+
+    try:
+        X = vec.fit_transform(texts)
+    except ValueError:
+        # Например: все документы пустые -> empty vocabulary
+        n = len(texts)
+        sim = np.zeros((n, n), dtype=float)
+        np.fill_diagonal(sim, 1.0)
+        return sim
+
+    sim = (X @ X.T).toarray()
+    sim = np.clip(sim, 0.0, 1.0)
+    np.fill_diagonal(sim, 1.0)
+    return sim

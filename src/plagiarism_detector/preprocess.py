@@ -23,3 +23,7 @@ def tokenize(text: str, cfg: PreprocessConfig = PreprocessConfig()) -> List[str]
     text = normalize_text(text, lower=cfg.lower)
     tokens = _WORD_RE.findall(text)
     return [t for t in tokens if len(t) >= cfg.min_token_len]
+
+
+def detokenize(tokens: List[str]) -> str:
+    return " ".join(tokens)
