@@ -110,6 +110,7 @@ Details: [docs/ci-cd.en.md](docs/ci-cd.en.md)
 
 - Similarity methods and interpretation: [docs/methods.en.md](docs/methods.en.md)
 - CI/CD automation: [docs/ci-cd.en.md](docs/ci-cd.en.md)
+- Usage and demo dataset: [docs/usage.en.md](docs/usage.en.md)
 
 ---
 

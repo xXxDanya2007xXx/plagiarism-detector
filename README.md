@@ -111,6 +111,7 @@ python -m plagiarism_detector --input uploads --out reports --threshold 0.75
 
 - Метрики и интерпретация результатов: [docs/methods.md](docs/methods.md)
 - CI/CD и автоматизация: [docs/ci-cd.md](docs/ci-cd.md)
+- Использование и демо-датасет: [docs/usage.md](docs/usage.md)
 
 ---
 
