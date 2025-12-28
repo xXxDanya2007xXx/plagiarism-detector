@@ -197,6 +197,10 @@ GitHub Pages через Actions: https://docs.github.com/en/pages/getting-starte
 │       ├── essay_02_similar.txt
 │       └── essay_03_unrelated.txt
 ├── docs
+│   ├── assets
+│   │   ├── example_heatmap.png
+│   │   ├── example_similarity_hist.png
+│   │   └── example_top_pairs.png
 │   ├── ci-cd.en.md
 │   ├── ci-cd.md
 │   ├── methods.en.md
