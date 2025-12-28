@@ -19,6 +19,15 @@ Outputs:
 - `reports/report.md`
 - `reports/heatmap.png`
 
+## Quick commands (Makefile)
+
+```bash
+make install
+make lint
+make test
+make run-sample
+```
+
 ## Run directly from data/sample
 
 ```bash

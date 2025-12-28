@@ -19,6 +19,15 @@ python -m plagiarism_detector --input uploads --out reports --threshold 0.75
 - `reports/report.md`
 - `reports/heatmap.png`
 
+## Быстрые команды (Makefile)
+
+```bash
+make install
+make lint
+make test
+make run-sample
+```
+
 ## Запуск без копирования (напрямую из data/sample)
 
 ```bash

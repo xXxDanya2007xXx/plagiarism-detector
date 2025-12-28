@@ -8,3 +8,6 @@ black>=24,<26
 
 pylint>=3,<4
 markdown>=3.6,<4
+
+pypdf>=4,<6
+python-docx>=1.1,<2
