@@ -44,8 +44,15 @@
 ├── src
 │   └── plagiarism_detector
 │       ├── __init__.py
-│       └── __main__.py
+│       ├── __main__.py
+│       ├── analyzer.py
+│       ├── preprocess.py
+│       ├── readers.py
+│       └── similarity.py
 ├── tests
+│   ├── test_analyzer.py
+│   ├── test_preprocess.py
+│   ├── test_similarity.py
 │   └── test_smoke.py
 └── uploads
     └── .gitkeep
