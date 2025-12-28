@@ -147,16 +147,23 @@ black --check src tests scripts
 ├── README.md
 ├── data
 │   └── sample
-│       └── .gitkeep
+│       ├── .gitkeep
+│       ├── README.md
+│       ├── essay_01.txt
+│       ├── essay_02_similar.txt
+│       └── essay_03_unrelated.txt
 ├── docs
 │   ├── ci-cd.en.md
 │   ├── ci-cd.md
 │   ├── methods.en.md
-│   └── methods.md
+│   ├── methods.md
+│   ├── usage.en.md
+│   └── usage.md
 ├── pyproject.toml
 ├── requirements.txt
 ├── scripts
 │   ├── .gitkeep
+│   ├── copy_sample_to_uploads.py
 │   └── generate_site.py
 ├── src
 │   └── plagiarism_detector
@@ -171,6 +178,7 @@ black --check src tests scripts
 │   ├── test_analyzer.py
 │   ├── test_preprocess.py
 │   ├── test_reporting.py
+│   ├── test_sample_dataset.py
 │   ├── test_similarity.py
 │   ├── test_similarity_tfidf.py
 │   └── test_smoke.py
