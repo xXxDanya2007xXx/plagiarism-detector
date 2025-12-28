@@ -1,24 +1,31 @@
 # CI/CD
 
-## CI workflow (ci.yml)
-Runs on every push / pull request:
-- black --check
-- flake8
-- pylint (quality gate)
-- pytest
+Документация GitHub Actions: https://docs.github.com/en/actions
 
-Goal: keep main branch always green and enforce code quality.
+## CI (`.github/workflows/ci.yml`)
 
-## Report workflow (report.yml)
-Runs:
-- on schedule (cron)
-- manually (workflow_dispatch with parameters)
-- on push to main when uploads/**, src/**, scripts/** change
+Запускается на:
+- `push` в `main/master`
+- `pull_request`
 
-Produces:
-- reports/ (json + md + png)
-- site/ (static html report)
+Проверки:
+- `black --check` (форматирование)
+- `flake8` (PEP8/линт)
+- `pylint` (качество кода, если включено)
+- `pytest` (юнит-тесты)
 
-Publishes:
-- artifacts in GitHub Actions
-- GitHub Pages (via deploy-pages)
+Цель: не допускать деградации качества и поддерживать “зелёную” ветку.
+
+## Report (`.github/workflows/report.yml`)
+
+Запускается:
+- по расписанию (`schedule`)
+- вручную (`workflow_dispatch` с параметрами)
+- при изменениях в `uploads/**` (через `push` + `paths`)
+
+Результаты:
+- сохраняются как **Artifacts** (папки `reports/` и/или `site/`)
+- при необходимости деплоятся на **GitHub Pages** (включается в Settings → Pages → Source: GitHub Actions)
+
+Документация про триггеры workflow:  
+https://docs.github.com/en/actions/writing-workflows/choosing-when-your-workflow-runs
