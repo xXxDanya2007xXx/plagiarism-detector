@@ -143,6 +143,7 @@ black --check src tests scripts
 ├── .pylintrc
 ├── Dockerfile
 ├── LICENSE
+├── Makefile
 ├── README.en.md
 ├── README.md
 ├── data
@@ -177,6 +178,7 @@ black --check src tests scripts
 ├── tests
 │   ├── test_analyzer.py
 │   ├── test_preprocess.py
+│   ├── test_readers_formats.py
 │   ├── test_reporting.py
 │   ├── test_sample_dataset.py
 │   ├── test_similarity.py
