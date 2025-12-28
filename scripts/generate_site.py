@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import shutil
 from pathlib import Path
 
 import markdown as md
@@ -14,6 +15,12 @@ def write_site(site_dir: Path, report_md: Path, report_json: Path, heatmap_png: 
 
     md_text = report_md.read_text(encoding="utf-8")
     body_html = md.markdown(md_text, extensions=["tables"])
+
+    heatmap_html = ""
+    if heatmap_png.exists():
+        heatmap_html = '<img src="heatmap.png" alt="Similarity heatmap"/>'
+    else:
+        heatmap_html = "<p><em>No heatmap available (not enough data).</em></p>"
 
     html = f"""<!doctype html>
 <html>
@@ -32,30 +39,36 @@ def write_site(site_dir: Path, report_md: Path, report_json: Path, heatmap_png: 
 <body>
   <h1>Plagiarism Detector</h1>
   <p><a href="report.json">report.json</a> • <a href="report.md">report.md</a></p>
+
   <h2>Heatmap</h2>
-  <img src="heatmap.png" alt="Similarity heatmap"/>
+  {heatmap_html}
+
   <hr/>
   {body_html}
 </body>
 </html>
 """
     (site_dir / "index.html").write_text(html, encoding="utf-8")
+
+    # publish raw artifacts alongside the html
     (site_dir / "report.md").write_text(md_text, encoding="utf-8")
     (site_dir / "report.json").write_text(report_json.read_text(encoding="utf-8"), encoding="utf-8")
-    (site_dir / "heatmap.png").write_bytes(heatmap_png.read_bytes())
+    if heatmap_png.exists():
+        shutil.copyfile(heatmap_png, site_dir / "heatmap.png")
 
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--input", default="uploads")
-    ap.add_argument("--out", default="reports")
-    ap.add_argument("--site", default="site")
-    ap.add_argument("--threshold", type=float, default=0.75)
+    ap.add_argument("--input", default="uploads", help="Folder with submissions")
+    ap.add_argument("--out", default="reports", help="Output folder for reports")
+    ap.add_argument("--site", default="site", help="Output folder for static site")
+    ap.add_argument("--threshold", type=float, default=0.75, help="Suspicion threshold 0..1")
     args = ap.parse_args()
 
     out_dir = Path(args.out)
     site_dir = Path(args.site)
     out_dir.mkdir(parents=True, exist_ok=True)
+    site_dir.mkdir(parents=True, exist_ok=True)
 
     result = analyze_folder(Path(args.input), threshold=args.threshold)
 
@@ -67,15 +80,12 @@ def main() -> int:
     save_markdown(result, report_md)
     save_heatmap_png(result, heatmap_png)
 
-    # heatmap может не создаться при пустом наборе; тогда сайт всё равно делаем без картинки
+    write_site(site_dir, report_md, report_json, heatmap_png)
+    print(f"Generated: {report_json}")
+    print(f"Generated: {report_md}")
     if heatmap_png.exists():
-        write_site(site_dir, report_md, report_json, heatmap_png)
-    else:
-        site_dir.mkdir(parents=True, exist_ok=True)
-        (site_dir / "index.html").write_text(
-            "<h1>Plagiarism Detector</h1><p>No data to plot.</p>", encoding="utf-8"
-        )
-
+        print(f"Generated: {heatmap_png}")
+    print(f"Generated site: {site_dir / 'index.html'}")
     return 0
 
 

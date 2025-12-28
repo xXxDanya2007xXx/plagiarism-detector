@@ -20,6 +20,7 @@ on:
       - "src/**"
       - "scripts/**"
       - "requirements.txt"
+      - ".github/workflows/report.yml"
 
 permissions:
   contents: read
@@ -51,11 +52,17 @@ jobs:
 
       - name: Generate report + site
         run: |
+          FOLDER="${{ github.event.inputs.folder }}"
+          THRESH="${{ github.event.inputs.threshold }}"
+
+          if [ -z "$FOLDER" ]; then FOLDER="uploads"; fi
+          if [ -z "$THRESH" ]; then THRESH="0.75"; fi
+
           python scripts/generate_site.py \
-            --input "${{ inputs.folder || 'uploads' }}" \
+            --input "$FOLDER" \
             --out reports \
             --site site \
-            --threshold "${{ inputs.threshold || '0.75' }}"
+            --threshold "$THRESH"
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
