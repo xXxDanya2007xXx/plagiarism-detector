@@ -36,9 +36,7 @@ def read_docx(path: Path) -> str:
     try:
         import docx  # python-docx
     except Exception as e:  # pragma: no cover
-        raise RuntimeError(
-            "DOCX support requires 'python-docx'. Install it via requirements.txt."
-        ) from e
+        raise RuntimeError("DOCX support requires 'python-docx'. Install it via requirements.txt.") from e
 
     d = docx.Document(str(path))
     return "\n".join(p.text for p in d.paragraphs)
@@ -72,9 +70,7 @@ def read_folder(
     allowed = tuple(e.lower() for e in (exts if exts is not None else SUPPORTED_EXTS))
 
     it = folder.rglob("*") if recursive else folder.glob("*")
-    paths = sorted(
-        p for p in it if p.is_file() and p.suffix.lower() in allowed and not p.name.startswith(".")
-    )
+    paths = sorted(p for p in it if p.is_file() and p.suffix.lower() in allowed and not p.name.startswith("."))
 
     docs: List[Document] = []
     for p in paths:

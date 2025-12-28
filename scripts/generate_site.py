@@ -20,13 +20,7 @@ from plagiarism_detector.reporting import (
 
 
 def _html_escape(s: str) -> str:
-    return (
-        s.replace("&", "&amp;")
-        .replace("<", "&lt;")
-        .replace(">", "&gt;")
-        .replace('"', "&quot;")
-        .replace("'", "&#39;")
-    )
+    return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;").replace("'", "&#39;")
 
 
 def _format_cell(v: Any) -> str:
@@ -145,9 +139,7 @@ def _write_site(
         matrix_html = _matrix_table_html(files, matrix)
     else:
         matrix_html = (
-            "<p class='muted'><em>"
-            "Matrix table is shown only when N ≤ 20 (use heatmap for larger sets)."
-            "</em></p>"
+            "<p class='muted'><em>" "Matrix table is shown only when N ≤ 20 (use heatmap for larger sets)." "</em></p>"
         )
 
     html = f"""<!doctype html>

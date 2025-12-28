@@ -24,9 +24,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--out", default="reports", help="Output folder")
     p.add_argument("--threshold", type=float, default=0.75, help="Suspicion threshold 0..1")
     p.add_argument("--no-plot", action="store_true", help="Disable heatmap PNG")
-    p.add_argument(
-        "--exts", default="", help="Comma-separated extensions, e.g. 'txt,pdf,docx' (empty = all)"
-    )
+    p.add_argument("--exts", default="", help="Comma-separated extensions, e.g. 'txt,pdf,docx' (empty = all)")
     p.add_argument("--no-recursive", action="store_true", help="Do not scan subfolders")
     return p
 

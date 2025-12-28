@@ -165,9 +165,7 @@ def save_markdown(result: AnalysisResult, path: Path) -> None:
     path.write_text("".join(lines), encoding="utf-8")
 
 
-def save_heatmap_png(
-    result: AnalysisResult, path: Path, *, title: str = "Similarity heatmap"
-) -> None:
+def save_heatmap_png(result: AnalysisResult, path: Path, *, title: str = "Similarity heatmap") -> None:
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
 

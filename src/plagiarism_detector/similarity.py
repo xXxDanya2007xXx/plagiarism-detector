@@ -76,9 +76,7 @@ def lcs_length(a: Sequence[str], b: Sequence[str]) -> int:
     return prev[-1]
 
 
-def lcs_similarity(
-    tokens_a: Sequence[str], tokens_b: Sequence[str], *, max_tokens: int = 2000
-) -> float:
+def lcs_similarity(tokens_a: Sequence[str], tokens_b: Sequence[str], *, max_tokens: int = 2000) -> float:
     a = list(tokens_a[:max_tokens])
     b = list(tokens_b[:max_tokens])
     if not a and not b:
