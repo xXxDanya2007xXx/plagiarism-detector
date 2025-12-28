@@ -1,44 +1,69 @@
 # Использование
 
-## Демонстрация на sample dataset
-
-1) Скопировать примеры в `uploads/`:
-
-```bash
-python scripts/copy_sample_to_uploads.py
-```
-
-2) Запустить анализ:
+## 1) Анализ папки с работами
 
 ```bash
 python -m plagiarism_detector --input uploads --out reports --threshold 0.75
 ```
 
-Результаты:
-- `reports/report.json`
-- `reports/report.md`
-- `reports/heatmap.png`
+Результаты появятся в `reports/`:
+- `report.json`
+- `report.md`
+- `heatmap.png`
 
-## Быстрые команды (Makefile)
+## 2) Фильтрация форматов и обход подпапок
+
+Указать форматы (через запятую):
 
 ```bash
-make install
-make lint
-make test
-make run-sample
+python -m plagiarism_detector --input uploads --out reports --threshold 0.75 --exts txt,pdf,docx
 ```
 
-## Запуск без копирования (напрямую из data/sample)
+Отключить рекурсивный обход:
+
+```bash
+python -m plagiarism_detector --input uploads --out reports --threshold 0.75 --no-recursive
+```
+
+## 3) Демо на sample dataset
 
 ```bash
 python -m plagiarism_detector --input data/sample --out reports --threshold 0.75
 ```
 
-## Генерация отчёта через GitHub Actions
+## 4) Генерация статической страницы отчёта
 
-Workflow **Generate Report** поддерживает ручной запуск (`workflow_dispatch`).
-Можно указать:
-- `folder = data/sample`
-- `threshold = 0.75`
+```bash
+python scripts/generate_site.py --input data/sample --out reports --site site --threshold 0.75
+```
 
-После выполнения результаты будут доступны в **Artifacts** и/или на **GitHub Pages** (если включено).
+Папка `site/` содержит:
+- `index.html`
+- `report.json`, `report.md`, `heatmap.png` (копии рядом с HTML)
+
+Это сделано специально для удобной публикации на GitHub Pages.
+
+## 5) Автоматическая генерация через GitHub Actions
+
+Workflow **Generate Report** поддерживает:
+- расписание (`schedule`)
+- ручной запуск (`workflow_dispatch`)
+- автозапуск при изменениях в `uploads/**` (через `push` + `paths`)
+
+Документация по триггерам:  
+https://docs.github.com/en/actions/writing-workflows/choosing-when-your-workflow-runs
+
+## Docker
+
+Сборка:
+```bash
+docker build -t plagiarism-detector .
+```
+
+Запуск:
+```bash
+docker run --rm \
+  -v "$PWD/uploads:/app/uploads" \
+  -v "$PWD/reports:/app/reports" \
+  plagiarism-detector --input uploads --out reports --threshold 0.75
+```

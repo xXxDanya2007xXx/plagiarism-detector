@@ -7,33 +7,35 @@
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
 **Plagiarism Detector** is a text similarity tool for student submissions.  
-It builds a pairwise similarity matrix across a folder of files and highlights *suspiciously similar* pairs for manual review.
+It builds a similarity matrix across a folder of files and highlights pairs worth manual review.
 
-> Note: this tool measures **similarity**, not “proof of plagiarism”. Use it as a screening step.
+> Note: the tool measures **similarity**, not “proof of plagiarism”. Use it as a screening step.
 
 ---
 
 ## Features
 
-- Analyze a folder of submissions (`uploads/`) and compute a **similarity matrix**
-- Multiple similarity signals (see [docs/methods.en.md](docs/methods.en.md))
-- Outputs:
-  - `reports/report.json` — machine-readable results
+- Folder-based ingestion with supported formats:
+  - ✅ `.txt`
+  - ✅ `.pdf`
+  - ✅ `.docx`
+- Similarity signals and final score (see [docs/methods.en.md](docs/methods.en.md)):
+  - TF‑IDF cosine similarity
+  - SequenceMatcher ratio
+  - N‑gram Jaccard similarity
+  - LCS similarity (token-based)
+- Reports:
+  - `reports/report.json` — detailed machine-readable report (includes summary)
   - `reports/report.md` — human-friendly report
-  - `reports/heatmap.png` — similarity heatmap
-- GitHub Actions automation:
-  - CI: style checks + tests
-  - Scheduled/manual/on-change reports (see [docs/ci-cd.en.md](docs/ci-cd.en.md))
-
-### Supported formats
-- ✅ Current: `.txt`
-- ⏳ Planned: `.pdf`, `.docx` (see Roadmap)
+  - `reports/heatmap.png` — heatmap visualization
+- Static report page generation:
+  - `site/index.html` + copies of `report.json`, `report.md`, `heatmap.png` (for GitHub Pages)
 
 ---
 
 ## Quick start
 
-### Linux / macOS
+### Install (Linux/macOS)
 ```bash
 git clone https://github.com/xXxDanya2007xXx/plagiarism-detector.git
 cd plagiarism-detector
@@ -43,47 +45,89 @@ python3 -m venv .venv
 
 pip install -r requirements.txt
 pip install -e .
-
-python -m plagiarism_detector --input uploads --out reports --threshold 0.75
 ```
 
-### Windows (PowerShell)
-```powershell
-git clone https://github.com/xXxDanya2007xXx/plagiarism-detector.git
-cd plagiarism-detector
-
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-
-pip install -r requirements.txt
-pip install -e .
-
-python -m plagiarism_detector --input uploads --out reports --threshold 0.75
-```
-
-> To exit the venv: `deactivate`
-
----
-
-## Usage
-
-1) Put `.txt` files into `uploads/`.
-2) Run:
-
+### Run analysis
 ```bash
 python -m plagiarism_detector --input uploads --out reports --threshold 0.75
 ```
 
-Results will be saved to `reports/`:
-- `report.json`
-- `report.md`
-- `heatmap.png`
+Outputs: `reports/report.json`, `reports/report.md`, `reports/heatmap.png`.
 
-### CLI arguments
-- `--input` — input folder (default: `uploads`)
-- `--out` — output folder (default: `reports`)
-- `--threshold` — suspiciousness threshold (0..1, default: `0.75`)
-- `--no-plot` — disable heatmap generation (if supported by your CLI version)
+---
+
+## Docker
+
+You can run the project in a container (this repo includes a `Dockerfile`).
+
+### Build
+```bash
+docker build -t plagiarism-detector .
+```
+
+### Run (mount input/output folders)
+```bash
+docker run --rm \
+  -v "$PWD/uploads:/app/uploads" \
+  -v "$PWD/reports:/app/reports" \
+  plagiarism-detector --input uploads --out reports --threshold 0.75
+```
+
+### Linux: avoid root-owned output files
+If you run Docker via `sudo`, output files may be owned by `root`. Run with your UID/GID:
+
+```bash
+docker run --rm --user "$(id -u):$(id -g)" \
+  -v "$PWD/uploads:/app/uploads" \
+  -v "$PWD/reports:/app/reports" \
+  plagiarism-detector --input uploads --out reports --threshold 0.75
+```
+
+### Cleanup
+- Remove the image:
+```bash
+docker rmi plagiarism-detector
+```
+- Remove unused layers/containers/cache:
+```bash
+docker system prune
+```
+
+---
+
+## Demo (sample dataset)
+
+```bash
+python -m plagiarism_detector --input data/sample --out reports --threshold 0.75
+python scripts/generate_site.py --input data/sample --out reports --site site --threshold 0.75
+```
+
+---
+
+## Why both `reports/` and `site/` exist
+
+- `reports/` contains raw analysis artifacts (JSON/MD/PNG).
+- `site/` contains a self-contained static page (`index.html`) plus copies of the artifacts next to it, so:
+  - you can open `site/index.html` locally,
+  - GitHub Pages can publish it as a static site with no external links.
+
+Both folders are generated and typically ignored by git.
+
+---
+
+## CLI
+
+```bash
+python -m plagiarism_detector --help
+```
+
+Common arguments:
+- `--input` — input folder
+- `--out` — output folder
+- `--threshold` — suspiciousness threshold (0..1)
+- `--exts` — comma-separated extensions (e.g. `txt,pdf,docx`)
+- `--no-recursive` — disable recursive scan
+- `--no-plot` — disable `heatmap.png` (if supported by your CLI version)
 
 ---
 
@@ -91,120 +135,33 @@ Results will be saved to `reports/`:
 
 GitHub Actions docs: https://docs.github.com/en/actions
 
-- **CI workflow** (`ci.yml`) runs on every push/PR and executes:
-  - formatting/style checks (`black`, `flake8`)
-  - code quality gate (`pylint`, if enabled)
-  - unit tests (`pytest`)
+- **CI** (`ci.yml`) runs on push/PR:
+  - `black`, `flake8`, `pytest` (and `pylint` if enabled)
 
-- **Report workflow** (`report.yml`) runs:
+- **Generate Report** (`report.yml`) runs:
   - on schedule (`schedule`)
-  - manually (`workflow_dispatch` with inputs)
+  - manually (`workflow_dispatch`)
   - on changes in `uploads/**` (via `push` + `paths`)
-  - uploads results as **Artifacts** and can publish the latest report to **GitHub Pages** (if enabled in repo settings)
 
-Details: [docs/ci-cd.en.md](docs/ci-cd.en.md)
+The workflow generates `reports/` and `site/`, uploads them as **Artifacts**, and can deploy `site/` to **GitHub Pages** (if enabled in repo settings).  
+CI also checks that the `Dockerfile` builds successfully (`docker build`).
+Workflow triggers reference: https://docs.github.com/en/actions/writing-workflows/choosing-when-your-workflow-runs  
+GitHub Pages via Actions: https://docs.github.com/en/pages/getting-started-with-github-pages/using-github-pages-with-github-actions
 
 ---
 
 ## Documentation
 
-- Similarity methods and interpretation: [docs/methods.en.md](docs/methods.en.md)
-- CI/CD automation: [docs/ci-cd.en.md](docs/ci-cd.en.md)
-- Usage and demo dataset: [docs/usage.en.md](docs/usage.en.md)
-
----
-
-## Development
-
-```bash
-pip install -r requirements.txt
-pip install -e .
-
-pytest -q
-flake8 src tests scripts
-black --check src tests scripts
-```
+- Methods and interpretation: [docs/methods.en.md](docs/methods.en.md)
+- Usage/demo: [docs/usage.en.md](docs/usage.en.md)
+- CI/CD: [docs/ci-cd.en.md](docs/ci-cd.en.md)
 
 ---
 
 ## Project structure
 
 <!-- STRUCTURE_START -->
-```text
-.
-├── .dockerignore
-├── .flake8
-├── .github
-│   └── workflows
-│       ├── ci.yml
-│       ├── readme-tree.yml
-│       └── report.yml
-├── .gitignore
-├── .pylintrc
-├── Dockerfile
-├── LICENSE
-├── Makefile
-├── README.en.md
-├── README.md
-├── data
-│   └── sample
-│       ├── .gitkeep
-│       ├── README.md
-│       ├── essay_01.txt
-│       ├── essay_02_similar.txt
-│       └── essay_03_unrelated.txt
-├── docs
-│   ├── ci-cd.en.md
-│   ├── ci-cd.md
-│   ├── methods.en.md
-│   ├── methods.md
-│   ├── usage.en.md
-│   └── usage.md
-├── pyproject.toml
-├── requirements.txt
-├── scripts
-│   ├── .gitkeep
-│   ├── copy_sample_to_uploads.py
-│   └── generate_site.py
-├── src
-│   └── plagiarism_detector
-│       ├── __init__.py
-│       ├── __main__.py
-│       ├── analyzer.py
-│       ├── preprocess.py
-│       ├── readers.py
-│       ├── reporting.py
-│       └── similarity.py
-├── tests
-│   ├── test_analyzer.py
-│   ├── test_preprocess.py
-│   ├── test_readers_formats.py
-│   ├── test_reporting.py
-│   ├── test_sample_dataset.py
-│   ├── test_similarity.py
-│   ├── test_similarity_tfidf.py
-│   └── test_smoke.py
-└── uploads
-    └── .gitkeep
-```
 <!-- STRUCTURE_END -->
-
----
-
-## Roadmap
-
-- [ ] Add `.pdf` and `.docx` support
-- [ ] Add more similarity methods and per-score explanations
-- [ ] Improve reports and visualizations
-- [ ] Expand tests and edge-case coverage
-
----
-
-## Limitations / ethical use
-
-- Similarity may be caused by templates, shared task statements, or valid quotations.
-- Very short texts are harder to compare reliably.
-- Use the tool as a screening signal and review flagged pairs manually.
 
 ---
 

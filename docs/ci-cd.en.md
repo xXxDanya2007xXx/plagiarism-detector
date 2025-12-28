@@ -9,23 +9,24 @@ Triggers:
 - `pull_request`
 
 Checks:
-- `black --check` (formatting)
-- `flake8` (lint/PEP8)
-- `pylint` (quality gate, if enabled)
-- `pytest` (unit tests)
-
-Goal: keep the main branch green and prevent quality regressions.
+- `black --check`
+- `flake8`
+- `pytest` (and `pylint` if enabled)
 
 ## Report (`.github/workflows/report.yml`)
 
 Triggers:
-- scheduled runs (`schedule`)
-- manual runs (`workflow_dispatch` with inputs)
-- changes under `uploads/**` (via `push` + `paths`)
+- `schedule` (cron)
+- `workflow_dispatch`
+- `push` on changes under `uploads/**` (via `paths`)
 
-Outputs:
-- uploaded as **Artifacts** (`reports/` and/or `site/`)
-- optionally deployed to **GitHub Pages** (enable in Settings → Pages → Source: GitHub Actions)
+Actions:
+- generate `reports/` and `site/`
+- upload **Artifacts**
+- (optional) deploy `site/` to GitHub Pages
 
 Workflow triggers reference:  
 https://docs.github.com/en/actions/writing-workflows/choosing-when-your-workflow-runs
+
+GitHub Pages via Actions:  
+https://docs.github.com/en/pages/getting-started-with-github-pages/using-github-pages-with-github-actions

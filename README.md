@@ -7,7 +7,7 @@
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
 **Plagiarism Detector** — инструмент для поиска текстовых совпадений в студенческих работах.  
-Он строит матрицу схожести по набору работ и помогает преподавателю быстро найти *подозрительно похожие* пары для ручной проверки.
+Он строит матрицу схожести по набору работ и выделяет пары, которые стоит проверить вручную.
 
 > Важно: инструмент измеряет **схожесть текста**, а не “доказывает плагиат”. Используйте как этап предварительного скрининга.
 
@@ -15,25 +15,27 @@
 
 ## Возможности
 
-- Анализ набора работ из папки (`uploads/`) и расчёт **матрицы схожести**
-- Несколько метрик сходства (см. [docs/methods.md](docs/methods.md))
+- Загрузка работ из папки и поддержка форматов:
+  - ✅ `.txt`
+  - ✅ `.pdf`
+  - ✅ `.docx`
+- Метрики схожести и итоговый скор (см. [docs/methods.md](docs/methods.md)):
+  - TF‑IDF cosine similarity
+  - SequenceMatcher ratio
+  - N‑gram Jaccard similarity
+  - LCS similarity (по токенам)
 - Отчёты:
-  - `reports/report.json` — машинно-читаемый результат
-  - `reports/report.md` — краткий отчёт для человека
+  - `reports/report.json` — подробный машинно-читаемый отчёт (включая summary)
+  - `reports/report.md` — отчёт для человека
   - `reports/heatmap.png` — визуализация матрицы
-- Автоматизация через GitHub Actions:
-  - CI: стиль кода + тесты
-  - Отчёты по расписанию/вручную/при изменении `uploads/` (см. [docs/ci-cd.md](docs/ci-cd.md))
-
-### Форматы файлов
-- ✅ Сейчас: `.txt`
-- ⏳ В планах: `.pdf`, `.docx` (см. Roadmap)
+- Генерация статической страницы отчёта:
+  - `site/index.html` + копии `report.json`, `report.md`, `heatmap.png` (для GitHub Pages)
 
 ---
 
 ## Быстрый старт
 
-### Linux / macOS
+### 1) Установка (Linux/macOS)
 ```bash
 git clone https://github.com/xXxDanya2007xXx/plagiarism-detector.git
 cd plagiarism-detector
@@ -43,176 +45,130 @@ python3 -m venv .venv
 
 pip install -r requirements.txt
 pip install -e .
-
-python -m plagiarism_detector --input uploads --out reports --threshold 0.75
 ```
 
-### Windows (PowerShell)
-```powershell
-git clone https://github.com/xXxDanya2007xXx/plagiarism-detector.git
-cd plagiarism-detector
-
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-
-pip install -r requirements.txt
-pip install -e .
-
-python -m plagiarism_detector --input uploads --out reports --threshold 0.75
-```
-
-> Чтобы выйти из виртуального окружения: `deactivate`
-
----
-
-## Использование
-
-### Пример
-1) Положите `.txt` файлы в `uploads/` (например, `uploads/work1.txt`, `uploads/work2.txt`).
-2) Запустите анализ:
-
+### 2) Запуск анализа
 ```bash
 python -m plagiarism_detector --input uploads --out reports --threshold 0.75
 ```
 
-Результаты появятся в `reports/`:
-- `report.json`
-- `report.md`
-- `heatmap.png`
+Результаты: `reports/report.json`, `reports/report.md`, `reports/heatmap.png`.
 
-### Параметры CLI
-- `--input` — папка с работами (по умолчанию `uploads`)
-- `--out` — папка для отчётов (по умолчанию `reports`)
-- `--threshold` — порог “подозрительности” (0..1, по умолчанию `0.75`)
-- `--no-plot` — отключить генерацию `heatmap.png` (если поддерживается в вашей версии CLI)
+---
+
+## Docker
+
+Проект можно запускать в контейнере (в репозитории есть `Dockerfile`).
+
+### Сборка образа
+```bash
+docker build -t plagiarism-detector .
+```
+
+### Запуск (монтируем папки с входом/выходом)
+```bash
+docker run --rm \
+  -v "$PWD/uploads:/app/uploads" \
+  -v "$PWD/reports:/app/reports" \
+  plagiarism-detector --input uploads --out reports --threshold 0.75
+```
+
+### Linux: чтобы файлы в `reports/` создавались от вашего пользователя
+Если запускаете Docker через `sudo`, файлы в `reports/` могут создаваться с владельцем `root`.
+Можно запускать контейнер от текущего UID/GID:
+
+```bash
+docker run --rm --user "$(id -u):$(id -g)" \
+  -v "$PWD/uploads:/app/uploads" \
+  -v "$PWD/reports:/app/reports" \
+  plagiarism-detector --input uploads --out reports --threshold 0.75
+```
+
+### Очистка (если нужно)
+- Удалить образ:
+```bash
+docker rmi plagiarism-detector
+```
+- Удалить “мусор” (неиспользуемые слои/контейнеры/кэш):
+```bash
+docker system prune
+```
+
+---
+
+## Демонстрация на sample dataset
+
+```bash
+python -m plagiarism_detector --input data/sample --out reports --threshold 0.75
+python scripts/generate_site.py --input data/sample --out reports --site site --threshold 0.75
+```
+
+---
+
+## Папки `reports/` и `site/` — почему обе нужны
+
+- `reports/` содержит **выходные артефакты анализа** (JSON/MD/PNG).
+- `site/` содержит **статический сайт** (`index.html`) и копии артефактов рядом, чтобы:
+  - можно было открыть `site/index.html` локально,
+  - GitHub Pages мог опубликовать отчёт как статический сайт без внешних ссылок.
+
+Обе папки — генерируемые. Обычно они добавлены в `.gitignore`.
+
+---
+
+## CLI
+
+```bash
+python -m plagiarism_detector --help
+```
+
+Типичные аргументы:
+- `--input` — папка с работами
+- `--out` — папка для отчётов
+- `--threshold` — порог “подозрительности” (0..1)
+- `--exts` — список расширений через запятую (например: `txt,pdf,docx`)
+- `--no-recursive` — не обходить подпапки
+- `--no-plot` — отключить генерацию `heatmap.png` (если поддерживается вашей версией CLI)
 
 ---
 
 ## GitHub Actions (CI/CD)
 
-Проект использует GitHub Actions: https://docs.github.com/en/actions
+Документация GitHub Actions: https://docs.github.com/en/actions
 
-- **CI workflow** (`ci.yml`) запускается на каждый push/PR и выполняет:
-  - форматирование/стиль (`black`, `flake8`)
-  - качество кода (`pylint`, если включён)
-  - тесты (`pytest`)
+- **CI** (`ci.yml`) запускается на push/PR и выполняет:
+  - `black`, `flake8`, `pytest` (и `pylint`, если включён)
 
-- **Report workflow** (`report.yml`) запускается:
+- **Generate Report** (`report.yml`) запускается:
   - по расписанию (`schedule`)
-  - вручную (`workflow_dispatch` с параметрами)
+  - вручную (`workflow_dispatch`)
   - при изменениях в `uploads/**` (через `push` + `paths`)
-  - сохраняет результаты как **Artifacts**, а также может публиковать отчёт на **GitHub Pages** (если включено в настройках репозитория)
 
-Подробности: [docs/ci-cd.md](docs/ci-cd.md)
+Workflow генерирует `reports/` и `site/`, загружает их как **Artifacts** и может публиковать `site/` на **GitHub Pages** (если включено в настройках репозитория).  
+Также CI включает проверку, что `Dockerfile` собирается (`docker build`).
+Документация по триггерам: https://docs.github.com/en/actions/writing-workflows/choosing-when-your-workflow-runs  
+GitHub Pages через Actions: https://docs.github.com/en/pages/getting-started-with-github-pages/using-github-pages-with-github-actions
 
 ---
 
 ## Документация
 
-- Метрики и интерпретация результатов: [docs/methods.md](docs/methods.md)
-- CI/CD и автоматизация: [docs/ci-cd.md](docs/ci-cd.md)
-- Использование и демо-датасет: [docs/usage.md](docs/usage.md)
-
----
-
-## Разработка
-
-### Запуск проверок локально
-```bash
-pip install -r requirements.txt
-pip install -e .
-
-pytest -q
-flake8 src tests scripts
-black --check src tests scripts
-```
+- Метрики и интерпретация: [docs/methods.md](docs/methods.md)
+- Использование/демо: [docs/usage.md](docs/usage.md)
+- CI/CD: [docs/ci-cd.md](docs/ci-cd.md)
 
 ---
 
 ## Структура проекта
 
 <!-- STRUCTURE_START -->
-```text
-.
-├── .dockerignore
-├── .flake8
-├── .github
-│   └── workflows
-│       ├── ci.yml
-│       ├── readme-tree.yml
-│       └── report.yml
-├── .gitignore
-├── .pylintrc
-├── Dockerfile
-├── LICENSE
-├── Makefile
-├── README.en.md
-├── README.md
-├── data
-│   └── sample
-│       ├── .gitkeep
-│       ├── README.md
-│       ├── essay_01.txt
-│       ├── essay_02_similar.txt
-│       └── essay_03_unrelated.txt
-├── docs
-│   ├── ci-cd.en.md
-│   ├── ci-cd.md
-│   ├── methods.en.md
-│   ├── methods.md
-│   ├── usage.en.md
-│   └── usage.md
-├── pyproject.toml
-├── requirements.txt
-├── scripts
-│   ├── .gitkeep
-│   ├── copy_sample_to_uploads.py
-│   └── generate_site.py
-├── src
-│   └── plagiarism_detector
-│       ├── __init__.py
-│       ├── __main__.py
-│       ├── analyzer.py
-│       ├── preprocess.py
-│       ├── readers.py
-│       ├── reporting.py
-│       └── similarity.py
-├── tests
-│   ├── test_analyzer.py
-│   ├── test_preprocess.py
-│   ├── test_readers_formats.py
-│   ├── test_reporting.py
-│   ├── test_sample_dataset.py
-│   ├── test_similarity.py
-│   ├── test_similarity_tfidf.py
-│   └── test_smoke.py
-└── uploads
-    └── .gitkeep
-```
 <!-- STRUCTURE_END -->
-
----
-
-## Roadmap
-
-- [ ] Поддержка `.pdf` и `.docx`
-- [ ] Дополнительные метрики (например, LCS / шинглы) и “объяснения” по скору
-- [ ] Улучшение визуализаций и отчётов
-- [ ] Расширение набора тестов и покрытие edge-case’ов
-
----
-
-## Ограничения и этичное использование
-
-- Высокая схожесть может быть вызвана шаблонами, формулировкой задания, корректными цитатами.
-- Для коротких текстов метрики менее стабильны.
-- Рекомендуется использовать результат как *сигнал*, а затем проверять пары вручную.
 
 ---
 
 ## Лицензия
 
-MIT License — см. файл [LICENSE](LICENSE).
+MIT License — см. [LICENSE](LICENSE).
 
 ---
 

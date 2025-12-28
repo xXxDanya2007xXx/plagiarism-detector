@@ -1,31 +1,32 @@
 # CI/CD
 
-Документация GitHub Actions: https://docs.github.com/en/actions
+GitHub Actions docs: https://docs.github.com/en/actions
 
 ## CI (`.github/workflows/ci.yml`)
 
-Запускается на:
+Триггеры:
 - `push` в `main/master`
 - `pull_request`
 
 Проверки:
-- `black --check` (форматирование)
-- `flake8` (PEP8/линт)
-- `pylint` (качество кода, если включено)
-- `pytest` (юнит-тесты)
-
-Цель: не допускать деградации качества и поддерживать “зелёную” ветку.
+- `black --check`
+- `flake8`
+- `pytest` (и `pylint`, если включён)
 
 ## Report (`.github/workflows/report.yml`)
 
-Запускается:
-- по расписанию (`schedule`)
-- вручную (`workflow_dispatch` с параметрами)
-- при изменениях в `uploads/**` (через `push` + `paths`)
+Триггеры:
+- `schedule` (cron)
+- `workflow_dispatch`
+- `push` при изменениях в `uploads/**` (через `paths`)
 
-Результаты:
-- сохраняются как **Artifacts** (папки `reports/` и/или `site/`)
-- при необходимости деплоятся на **GitHub Pages** (включается в Settings → Pages → Source: GitHub Actions)
+Действия:
+- генерация `reports/` и `site/`
+- загрузка **Artifacts**
+- (опционально) деплой `site/` на GitHub Pages
 
-Документация про триггеры workflow:  
+Триггеры workflow:  
 https://docs.github.com/en/actions/writing-workflows/choosing-when-your-workflow-runs
+
+GitHub Pages via Actions:  
+https://docs.github.com/en/pages/getting-started-with-github-pages/using-github-pages-with-github-actions

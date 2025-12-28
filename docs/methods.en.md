@@ -1,47 +1,44 @@
 # Similarity methods and interpretation
 
-This project computes **text similarity** between submissions to help identify pairs worth manual review.
+The project computes **text similarity** between submissions to help identify pairs worth manual review.
 Similarity ≠ proof of plagiarism.
 
 ## Pipeline
 
-1. Read files from a folder (currently `.txt`).
-2. Normalize/tokenize text.
-3. Compute pairwise similarity matrix.
-4. Generate reports: JSON, Markdown, and a PNG heatmap.
+1. Read documents from a folder (`.txt/.pdf/.docx`).
+2. Normalize and tokenize.
+3. Compute a similarity matrix.
+4. Generate reports (JSON/Markdown/PNG) and a static HTML page.
 
-## Similarity signals
-
-The exact set can evolve; the current configuration is saved in `report.json` under `config`.
+## Signals
 
 ### TF‑IDF cosine similarity
-Build TF‑IDF vectors and compute cosine similarity.
-- Strong baseline for lexical overlap
-- Reasonably robust to noise
+Build TF‑IDF representations (token-based) and compute cosine similarity.
 
 ### SequenceMatcher ratio
-Based on `difflib.SequenceMatcher`.
-- Good for near-copy cases and long shared fragments
-- Sensitive to reordering
+Based on `difflib.SequenceMatcher`. Good for long shared fragments.
 
 ### N‑gram Jaccard similarity
 Build word n‑grams and compute:
-`J(A,B) = |A ∩ B| / |A ∪ B|`
-- Useful for partial copying and shared phrasing
+`J(A,B) = |A ∩ B| / |A ∪ B|`.
+
+### LCS similarity
+Compute token-based LCS and normalize:
+`2*LCS(a,b)/(len(a)+len(b))`.
 
 ## Final score
 
-The final score is typically a weighted combination of multiple signals.
-Weights/parameters are stored in `report.json -> config` for transparency and reproducibility.
+The final score is a weighted combination of signals. Weights/parameters are stored in `report.json -> config`
+to keep runs reproducible and transparent.
 
-## Threshold
+## Interpreting the output
 
-- Default: `0.75`
-- Increase to reduce false positives.
-- Decrease to catch more suspicious pairs (more manual review needed).
+- `top_pairs` — pairs **above** the threshold
+- `top_pairs_overall` — most similar pairs **overall**, even if below threshold
+- `summary` — aggregate stats across all pairs (max/mean/median, pairs ≥ threshold)
 
 ## Limitations
 
-- Templates, shared task statements, and valid quotations can increase similarity.
+- Templates, shared task statements, and valid quotes can increase similarity.
 - Very short texts are harder to compare reliably.
-- Without semantic models, paraphrases may not be captured well.
+- Use this tool as a screening step and review flagged pairs manually.

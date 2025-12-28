@@ -1,10 +1,9 @@
 from pathlib import Path
 
-from plagiarism_detector.readers import read_document
+from plagiarism_detector.readers import read_document, read_folder
 
 
 def test_read_docx(tmp_path: Path):
-    # python-docx is in requirements
     import docx  # type: ignore
 
     p = tmp_path / "sample.docx"
@@ -17,7 +16,6 @@ def test_read_docx(tmp_path: Path):
 
 
 def test_read_pdf_no_crash(tmp_path: Path):
-    # pypdf is in requirements
     from pypdf import PdfWriter  # type: ignore
 
     p = tmp_path / "sample.pdf"
@@ -28,3 +26,18 @@ def test_read_pdf_no_crash(tmp_path: Path):
 
     doc = read_document(p)
     assert isinstance(doc.text, str)
+
+
+def test_read_folder_mixed(tmp_path: Path):
+    (tmp_path / "a.txt").write_text("alpha beta gamma", encoding="utf-8")
+
+    import docx  # type: ignore
+
+    d = docx.Document()
+    d.add_paragraph("alpha beta delta")
+    d.save(tmp_path / "b.docx")
+
+    docs = read_folder(tmp_path)
+    names = sorted(x.name for x in docs)
+    assert "a.txt" in names
+    assert "b.docx" in names
