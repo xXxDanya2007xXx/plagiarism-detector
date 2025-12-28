@@ -32,5 +32,9 @@ jobs:
       - name: Flake8
         run: flake8 src tests scripts
 
+      - name: Pylint
+        run: |
+          pylint src/plagiarism_detector --fail-under=7.5
+
       - name: Pytest
         run: pytest -q
