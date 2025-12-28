@@ -3,13 +3,12 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-import matplotlib
-
-matplotlib.use("Agg")  # важно для CI
-import matplotlib.pyplot as plt  # noqa: E402
-
+import matplotlib.pyplot as plt
 
 from .analyzer import AnalysisResult
+
+# Safe for CI/headless environments; no E402 because all imports are above.
+plt.switch_backend("Agg")
 
 
 def save_json(result: AnalysisResult, path: Path) -> None:
