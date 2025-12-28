@@ -9,7 +9,7 @@ from .reporting import save_heatmap_png, save_json, save_markdown
 
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="plagiarism_detector")
-    p.add_argument("--input", default="uploads", help="Folder with submissions (.txt)")
+    p.add_argument("--input", default="uploads", help="Folder with submissions (.txt/.pdf/.docx)")
     p.add_argument("--out", default="reports", help="Output folder")
     p.add_argument("--threshold", type=float, default=0.75, help="Suspicion threshold 0..1")
     p.add_argument("--no-plot", action="store_true", help="Disable heatmap PNG")
