@@ -27,8 +27,10 @@
 ├── .github
 │   └── workflows
 │       ├── ci.yml
-│       └── readme-tree.yml
+│       ├── readme-tree.yml
+│       └── report.yml
 ├── .gitignore
+├── .pylintrc
 ├── LICENSE
 ├── README.en.md
 ├── README.md
@@ -40,7 +42,8 @@
 ├── pyproject.toml
 ├── requirements.txt
 ├── scripts
-│   └── .gitkeep
+│   ├── .gitkeep
+│   └── generate_site.py
 ├── src
 │   └── plagiarism_detector
 │       ├── __init__.py
