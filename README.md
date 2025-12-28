@@ -132,7 +132,51 @@ black --check src tests scripts
 
 <!-- STRUCTURE_START -->
 ```text
-# This block is auto-updated by CI (readme-tree workflow), do not edit manually.
+.
+├── .dockerignore
+├── .flake8
+├── .github
+│   └── workflows
+│       ├── ci.yml
+│       ├── readme-tree.yml
+│       └── report.yml
+├── .gitignore
+├── .pylintrc
+├── Dockerfile
+├── LICENSE
+├── README.en.md
+├── README.md
+├── data
+│   └── sample
+│       └── .gitkeep
+├── docs
+│   ├── ci-cd.en.md
+│   ├── ci-cd.md
+│   ├── methods.en.md
+│   └── methods.md
+├── pyproject.toml
+├── requirements.txt
+├── scripts
+│   ├── .gitkeep
+│   └── generate_site.py
+├── src
+│   └── plagiarism_detector
+│       ├── __init__.py
+│       ├── __main__.py
+│       ├── analyzer.py
+│       ├── preprocess.py
+│       ├── readers.py
+│       ├── reporting.py
+│       └── similarity.py
+├── tests
+│   ├── test_analyzer.py
+│   ├── test_preprocess.py
+│   ├── test_reporting.py
+│   ├── test_similarity.py
+│   ├── test_similarity_tfidf.py
+│   └── test_smoke.py
+└── uploads
+    └── .gitkeep
 ```
 <!-- STRUCTURE_END -->
 
