@@ -23,6 +23,7 @@
 <!-- STRUCTURE_START -->
 ```text
 .
+├── .dockerignore
 ├── .flake8
 ├── .github
 │   └── workflows
@@ -31,6 +32,7 @@
 │       └── report.yml
 ├── .gitignore
 ├── .pylintrc
+├── Dockerfile
 ├── LICENSE
 ├── README.en.md
 ├── README.md
@@ -38,6 +40,7 @@
 │   └── sample
 │       └── .gitkeep
 ├── docs
+│   ├── ci-cd.md
 │   └── methods.md
 ├── pyproject.toml
 ├── requirements.txt
