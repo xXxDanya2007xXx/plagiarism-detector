@@ -162,6 +162,65 @@ GitHub Pages через Actions: https://docs.github.com/en/pages/getting-starte
 ## Структура проекта
 
 <!-- STRUCTURE_START -->
+```text
+.
+├── .dockerignore
+├── .flake8
+├── .github
+│   └── workflows
+│       ├── ci.yml
+│       ├── readme-tree.yml
+│       └── report.yml
+├── .gitignore
+├── .pylintrc
+├── Dockerfile
+├── LICENSE
+├── Makefile
+├── README.en.md
+├── README.md
+├── data
+│   └── sample
+│       ├── .gitkeep
+│       ├── README.md
+│       ├── essay_01.txt
+│       ├── essay_02_similar.txt
+│       └── essay_03_unrelated.txt
+├── docs
+│   ├── ci-cd.en.md
+│   ├── ci-cd.md
+│   ├── methods.en.md
+│   ├── methods.md
+│   ├── usage.en.md
+│   └── usage.md
+├── pyproject.toml
+├── requirements.txt
+├── scripts
+│   ├── .gitkeep
+│   ├── copy_sample_to_uploads.py
+│   └── generate_site.py
+├── src
+│   └── plagiarism_detector
+│       ├── __init__.py
+│       ├── __main__.py
+│       ├── analyzer.py
+│       ├── preprocess.py
+│       ├── readers.py
+│       ├── reporting.py
+│       └── similarity.py
+├── tests
+│   ├── test_analyzer.py
+│   ├── test_preprocess.py
+│   ├── test_readers_formats.py
+│   ├── test_reporting.py
+│   ├── test_sample_dataset.py
+│   ├── test_similarity.py
+│   ├── test_similarity_lcs.py
+│   ├── test_similarity_tfidf.py
+│   ├── test_site_generation.py
+│   └── test_smoke.py
+└── uploads
+    └── .gitkeep
+```
 <!-- STRUCTURE_END -->
 
 ---
