@@ -59,10 +59,25 @@ def main() -> int:
     if result.top_pairs:
         print("Top pairs:")
         for p in result.top_pairs[:5]:
-            print(
-                f"- {p['a']} vs {p['b']}: {p['score']:.3f} "
-                f"(tfidf={p['tfidf']:.3f}, seq={p['sequence']:.3f}, ngram={p['ngram']:.3f}, lcs={p['lcs']:.3f})"
-            )
+            a = p["a"]
+            b = p["b"]
+            score = float(p["score"])
+
+            details = []
+            if "tfidf" in p:
+                details.append(f"tfidf={float(p['tfidf']):.3f}")
+            if "sequence" in p:
+                details.append(f"seq={float(p['sequence']):.3f}")
+            if "ngram" in p:
+                details.append(f"ngram={float(p['ngram']):.3f}")
+            if "lcs" in p:
+                details.append(f"lcs={float(p['lcs']):.3f}")
+
+            details_str = ", ".join(details)
+            if details_str:
+                print(f"- {a} vs {b}: {score:.3f} ({details_str})")
+            else:
+                print(f"- {a} vs {b}: {score:.3f}")
     else:
         print("Top pairs: none (folder empty or below threshold)")
 

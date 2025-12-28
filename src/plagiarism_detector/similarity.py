@@ -85,5 +85,5 @@ def lcs_similarity(
         return 1.0
     if not a or not b:
         return 0.0
-    l = lcs_length(a, b)
-    return float(2.0 * l / (len(a) + len(b)))
+    lcs_len = lcs_length(a, b)
+    return float(2.0 * lcs_len / (len(a) + len(b)))

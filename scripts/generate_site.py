@@ -44,9 +44,8 @@ def _pairs_table_html(pairs: List[Dict[str, Any]]) -> str:
     for p in pairs:
         present.update(p.keys())
 
-    cols = [c for c in preferred if c in present] + sorted(
-        [k for k in present if k not in preferred]
-    )
+    cols = [c for c in preferred if c in present]
+    cols += sorted([k for k in present if k not in preferred])
 
     head = "".join(f"<th>{_html_escape(c)}</th>" for c in cols)
 
@@ -58,14 +57,7 @@ def _pairs_table_html(pairs: List[Dict[str, Any]]) -> str:
             tds.append(f"<td>{_html_escape(cell)}</td>")
         rows.append("<tr>" + "".join(tds) + "</tr>")
 
-    return f"""
-<table>
-  <thead><tr>{head}</tr></thead>
-  <tbody>
-    {''.join(rows)}
-  </tbody>
-</table>
-"""
+    return "<table>" f"<thead><tr>{head}</tr></thead>" f"<tbody>{''.join(rows)}</tbody>" "</table>"
 
 
 def _matrix_table_html(files: Sequence[str], matrix: Sequence[Sequence[float]]) -> str:
@@ -73,28 +65,24 @@ def _matrix_table_html(files: Sequence[str], matrix: Sequence[Sequence[float]]) 
     if n == 0 or n != len(matrix):
         return "<p><em>No matrix available.</em></p>"
 
-    # Header row
     thead = "<th></th>" + "".join(f"<th>{_html_escape(name)}</th>" for name in files)
 
-    # Body rows
     body_rows: List[str] = []
     for i in range(n):
-        row = [f"<th>{_html_escape(files[i])}</th>"]
+        row_cells: List[str] = [f"<th>{_html_escape(files[i])}</th>"]
         for j in range(n):
             v = float(matrix[i][j])
-            row.append(f"<td style='text-align:right'>{v:.3f}</td>")
-        body_rows.append("<tr>" + "".join(row) + "</tr>")
+            row_cells.append(f"<td style='text-align:right'>{v:.3f}</td>")
+        body_rows.append("<tr>" + "".join(row_cells) + "</tr>")
 
-    return f"""
-<div style="overflow:auto; border:1px solid #eee; border-radius:10px;">
-<table style="margin:0; min-width: 700px;">
-  <thead><tr>{thead}</tr></thead>
-  <tbody>
-    {''.join(body_rows)}
-  </tbody>
-</table>
-</div>
-"""
+    return (
+        "<div style='overflow:auto; border:1px solid #eee; border-radius:10px;'>"
+        "<table style='margin:0; min-width:700px;'>"
+        f"<thead><tr>{thead}</tr></thead>"
+        f"<tbody>{''.join(body_rows)}</tbody>"
+        "</table>"
+        "</div>"
+    )
 
 
 def _parse_exts(value: str) -> Optional[List[str]]:
@@ -120,38 +108,47 @@ def _write_site(
 ) -> None:
     site_dir.mkdir(parents=True, exist_ok=True)
 
-    # Copy raw artifacts for download from the page
     md_text = report_md.read_text(encoding="utf-8")
     (site_dir / "report.md").write_text(md_text, encoding="utf-8")
-    (site_dir / "report.json").write_text(report_json.read_text(encoding="utf-8"), encoding="utf-8")
+    (site_dir / "report.json").write_text(
+        report_json.read_text(encoding="utf-8"),
+        encoding="utf-8",
+    )
 
     heatmap_block = "<p><em>No heatmap available.</em></p>"
     if heatmap_png.exists():
         shutil.copyfile(heatmap_png, site_dir / "heatmap.png")
         heatmap_block = '<img src="heatmap.png" alt="Similarity heatmap"/>'
 
-    # Render markdown properly (fenced code blocks + tables)
     body_html = md.markdown(md_text, extensions=["tables", "fenced_code"])
 
-    summary_html = f"""
-<div class="cards">
-  <div class="card"><div class="k">Created (UTC)</div><div class="v small">{_html_escape(created_at_utc)}</div></div>
-  <div class="card"><div class="k">Threshold</div><div class="v">{threshold:.2f}</div></div>
-  <div class="card"><div class="k">Files</div><div class="v">{summary.get('n_files')}</div></div>
-  <div class="card"><div class="k">Pairs</div><div class="v">{summary.get('n_pairs')}</div></div>
-  <div class="card"><div class="k">Pairs ≥ threshold</div><div class="v">{summary.get('pairs_above_threshold')}</div></div>
-  <div class="card"><div class="k">Max score</div><div class="v">{_format_cell(summary.get('max_pair_score', '-'))}</div></div>
-</div>
-"""
+    summary_html = (
+        "<div class='cards'>"
+        "<div class='card'><div class='k'>Created (UTC)</div>"
+        f"<div class='v small'>{_html_escape(created_at_utc)}</div></div>"
+        "<div class='card'><div class='k'>Threshold</div>"
+        f"<div class='v'>{threshold:.2f}</div></div>"
+        "<div class='card'><div class='k'>Files</div>"
+        f"<div class='v'>{summary.get('n_files')}</div></div>"
+        "<div class='card'><div class='k'>Pairs</div>"
+        f"<div class='v'>{summary.get('n_pairs')}</div></div>"
+        "<div class='card'><div class='k'>Pairs ≥ threshold</div>"
+        f"<div class='v'>{summary.get('pairs_above_threshold')}</div></div>"
+        "<div class='card'><div class='k'>Max score</div>"
+        f"<div class='v'>{_format_cell(summary.get('max_pair_score', '-'))}</div></div>"
+        "</div>"
+    )
 
     pairs_html = _pairs_table_html(pairs_for_page)
 
-    # Show matrix table only for small N
-    matrix_html = ""
-    if len(files) <= 20 and len(files) > 0:
+    if 0 < len(files) <= 20:
         matrix_html = _matrix_table_html(files, matrix)
     else:
-        matrix_html = "<p class='muted'><em>Matrix table is shown only when N ≤ 20 (use heatmap for larger sets).</em></p>"
+        matrix_html = (
+            "<p class='muted'><em>"
+            "Matrix table is shown only when N ≤ 20 (use heatmap for larger sets)."
+            "</em></p>"
+        )
 
     html = f"""<!doctype html>
 <html>
@@ -189,7 +186,10 @@ def _write_site(
   {summary_html}
 
   <h2>Top pairs</h2>
-  <p class="muted">Showing the most similar pairs (overall). If threshold-filtered list is empty, this section is still populated.</p>
+  <p class="muted">
+    Showing the most similar pairs (overall). If threshold-filtered list is empty,
+    this section is still populated.
+  </p>
   {pairs_html}
 
   <h2>Matrix</h2>
@@ -216,7 +216,7 @@ def main() -> int:
     ap.add_argument(
         "--exts",
         default="",
-        help="Comma-separated extensions, e.g. 'txt,pdf,docx' (optional; used only if analyzer supports it)",
+        help="Comma-separated extensions (optional; used only if analyzer supports it)",
     )
     ap.add_argument(
         "--no-recursive",
@@ -237,7 +237,6 @@ def main() -> int:
     if args.clean_site and site_dir.exists():
         shutil.rmtree(site_dir)
 
-    # Call analyze_folder with only the parameters it supports (robust to local refactors)
     sig = inspect.signature(analyze_folder)
     kwargs: Dict[str, Any] = {"threshold": float(args.threshold)}
 
@@ -257,16 +256,12 @@ def main() -> int:
     save_markdown(result, report_md)
     save_heatmap_png(result, heatmap_png)
 
-    # Load JSON to reuse enriched fields (top_pairs_overall etc.), then render page.
     payload = json.loads(report_json.read_text(encoding="utf-8"))
     summary = payload.get("summary", build_summary(result))
 
-    # Prefer threshold-filtered list; if empty, show overall top pairs
-    pairs_for_page = (
-        payload.get("top_pairs")
-        or payload.get("top_pairs_overall")
-        or top_pairs_overall(result.files, result.similarity_matrix, k=10)
-    )
+    pairs_for_page = payload.get("top_pairs") or payload.get("top_pairs_overall")
+    if not pairs_for_page:
+        pairs_for_page = top_pairs_overall(result.files, result.similarity_matrix, k=10)
 
     _write_site(
         site_dir,
